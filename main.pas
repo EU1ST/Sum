@@ -14,16 +14,49 @@ type
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+
   private
     { Private declarations }
   public
     { Public declarations }
   end;
 
+  TPortListner = class(TThread)
+    private
+    { Private declarations }
+  protected
+    procedure Execute; override;
+  end;
+
 var
   Form1: TForm1;
+  PortListner: TPortListner;
 
 implementation
+
+procedure TPortListner.Execute;
+var
+  hPort: THandle;
+  lpEvtMask, lpModemStat: DWORD;
+begin
+  hPort:= CreateFile(PChar('COM6'),
+                        GENERIC_READ or GENERIC_WRITE, 0, nil,
+                        OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, LongInt(0));
+
+  lpEvtMask := EV_DSR;
+  SetCommMask(hPort,lpEvtMask);	// address of variable to get event mask
+
+  while true do
+    begin
+      WaitCommEvent(hPort, lpEvtMask, nil);
+      GetCommModemStatus(hPort,lpModemStat);
+      if lpModemStat and MS_DSR_ON <> 0 then
+        //SoundMaker.Play(600, 60) // 600 - частота в герцах, 60 - громкость 0-127
+
+      else
+        //SoundMaker.Stop;
+    end;
+end;
 
 type
   Int16 = SmallInt;

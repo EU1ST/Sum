@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, MMSystem, DirectSound, StdCtrls;
+  Dialogs, MMSystem, StdCtrls, DirectSound;
 
 type
   TForm1 = class(TForm)
@@ -14,6 +14,7 @@ type
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+
   private
     { Private declarations }
   public
@@ -22,6 +23,14 @@ type
 
 var
   Form1: TForm1;
+
+type
+  TNewThread = class(TThread)
+  private
+    { Private declarations }
+  protected
+    procedure Execute; override;
+  end;
 
 implementation
 
