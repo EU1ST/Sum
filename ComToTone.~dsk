@@ -18,7 +18,7 @@ EditWindowCount=1
 [D:\ComToTone\Sum\main.pas]
 ModuleType=SourceModule
 FormState=1
-FormOnTop=1
+FormOnTop=0
 
 [C:\Program Files (x86)\Borland\Delphi7\Bin\ProjectGroup1.bpg]
 FormState=0
@@ -28,7 +28,7 @@ FormOnTop=0
 FormState=0
 FormOnTop=0
 SymbolFile=D:\ComToTone\Sum\ComToTone.dsm
-ModSinceCompile=0
+ModSinceCompile=1
 
 [EditWindow0]
 ViewCount=1
@@ -41,11 +41,11 @@ Visible=1
 State=0
 Left=376
 Top=108
-Width=947
+Width=944
 Height=925
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=939
+ClientWidth=936
 ClientHeight=898
 LeftPanelSize=140
 LeftPanelClients=CodeExplorer@EditWindow0
@@ -53,13 +53,13 @@ LeftPanelData=000004000000000000000000000000000000000000000000000100000000000000
 RightPanelSize=0
 BottomPanelSize=0
 BottomPanelClients=MessageView@EditWindow0
-BottomPanelData=00000400010000000B0000004D65737361676556696577AB03000000000000025500000000000000010000000000000000000000000100000000AB0300000B0000004D65737361676556696577FFFFFFFF
+BottomPanelData=00000400010000000B0000004D6573736167655669657700000000000000000000000000000000000100000000000000000B0000004D65737361676556696577FFFFFFFF
 
 [View0]
 Module=D:\ComToTone\Sum\main.pas
-CursorX=21
-CursorY=74
-TopLine=65
+CursorX=20
+CursorY=7
+TopLine=1
 LeftCol=1
 
 [Watches]
@@ -130,7 +130,7 @@ LRDockWidth=190
 Dockable=1
 SplitPos=85
 ArrangeBy=Name
-SelectedItem=Caption
+SelectedItem=OnDestroy
 ExpandedItems=
 HiddenCategories=
 
@@ -172,11 +172,11 @@ Visible=0
 State=0
 Left=12
 Top=0
-Width=927
+Width=924
 Height=85
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=927
+ClientWidth=924
 ClientHeight=85
 TBDockHeight=85
 LRDockWidth=443

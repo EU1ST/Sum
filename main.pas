@@ -17,15 +17,18 @@ type
 
   private
     { Private declarations }
+
   public
     { Public declarations }
+    procedure TonePlay;
+    procedure ToneStop;
   end;
 
   TPortListner = class(TThread)
     private
     { Private declarations }
-  protected
-    procedure Execute; override;
+    protected
+      procedure Execute; override;
   end;
 
 var
@@ -52,9 +55,12 @@ begin
       GetCommModemStatus(hPort,lpModemStat);
       if lpModemStat and MS_DSR_ON <> 0 then
         //SoundMaker.Play(600, 60) // 600 - частота в герцах, 60 - громкость 0-127
-
+        //ShowMessage('play')
+        Form1.TonePlay
       else
         //SoundMaker.Stop;
+        Form1.ToneStop
+        //ShowMessage('stop')
     end;
 end;
 
@@ -65,7 +71,7 @@ const Pi = 3.14159265359;
       BitsPerSample = 16;
       SamplesPerSec = 44100;
       //MaxVol = 32767;
-      MaxVol = 3276;
+      MaxVol = 32767;
 var
   DS: IDirectSound;
   DSBuffer: IDirectSoundBuffer;
@@ -120,7 +126,7 @@ begin
 
   FillChar(DSBD, sizeof(TDSBufferDesc), 0);
   DSBD.dwSize := sizeof(TDSBufferDesc);
-  DSBD.dwFlags := DSBCAPS_STATIC;
+  DSBD.dwFlags := DSBCAPS_STATIC or DSBCAPS_GLOBALFOCUS;
   DSBD.dwBufferBytes := SamplesPerSec * 1; // 1 - 1 сек
   DSBD.lpwfxFormat := @wfx;
 
@@ -160,18 +166,36 @@ begin
   InitiateDirectSound(Handle);
   CreateStaticBuffer(Handle);
   FillBuffer(600);
+  PortListner:= TPortListner.Create(True);
+  PortListner.FreeOnTerminate:=true;
+  PortListner.Priority:=tpLower;
+  PortListner.Resume;
+end;
+
+procedure TForm1.TonePlay;
+begin
+//  CreateStaticBuffer(Handle);
+//  FillBuffer(1440);
+  DSBuffer.Play(0, 0, DSBPLAY_LOOPING)
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
 //  CreateStaticBuffer(Handle);
 //  FillBuffer(1440);
-  DSBuffer.Play(0, 0, DSBPLAY_LOOPING);
+//  DSBuffer.Play(0, 0, DSBPLAY_LOOPING);
+  TonePlay
+end;
+
+procedure TForm1.ToneStop;
+begin
+  DSBuffer.Stop()
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-  DSBuffer.Stop();
+  //DSBuffer.Stop();
+  ToneStop
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
