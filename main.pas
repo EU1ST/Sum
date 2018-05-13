@@ -82,7 +82,7 @@ var
   wfx: tWAVEFORMATEX;
   guidArr: array of TGUID;
   DS: IDirectSound;
-  DSGUID: PGUID;
+  TDSGUID: TGUID;
 
 {$R *.dfm}
 function EnumCallback(lpGuid: PGUID; lpcstrDescription, lpcstrModule: PChar;
@@ -102,7 +102,7 @@ var
   DSBPrimary: IDirectSoundBuffer;
   DSBD: TDSBufferDesc;
 begin
-  DirectSoundCreate(DSGUID, DS, nil);
+  DirectSoundCreate(@TDSGUID, DS, nil);
   DS.SetCooperativeLevel(hDlg, DSSCL_PRIORITY);
 
   FillChar(DSBD, sizeof(TDSBufferDesc), 0);
@@ -203,8 +203,8 @@ begin
 //  ZeroMemory(@capInfo, SizeOf(TDSCaps));
 //  capInfo.dwSize := SizeOf(TDSCaps);
 //  DirectSoundCreate(@guidArr[ComboBox1.ItemIndex], DS, nil);
-  DSGUID:= @guidArr[ComboBox1.ItemIndex];
-  DirectSoundCreate(DSGUID, DS, nil);
+  TDSGUID:= guidArr[ComboBox1.ItemIndex];
+  DirectSoundCreate(@TDSGUID, DS, nil);
   Caption := GUIDToString(guidArr[ComboBox1.ItemIndex]);
 //  DS.GetCaps(capInfo);
 end;
