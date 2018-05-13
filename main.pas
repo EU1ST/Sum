@@ -4,19 +4,16 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, MMSystem, StdCtrls, DirectSound;
+  Dialogs, MMSystem, StdCtrls, DirectSound, Registry;
 
 type
   TForm1 = class(TForm)
     Button1: TButton;
     Button2: TButton;
-    Button3: TButton;
-    ComboBox1: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
     procedure ComboBox1Change(Sender: TObject);
 
   private
@@ -82,20 +79,9 @@ var
   wfx: tWAVEFORMATEX;
   guidArr: array of TGUID;
   DS: IDirectSound;
-  TDSGUID: TGUID;
+  TDSGUID, RTDSGUID: TGUID;
 
 {$R *.dfm}
-function EnumCallback(lpGuid: PGUID; lpcstrDescription, lpcstrModule: PChar;
-    lpContext: Pointer): BOOL; stdcall;
-begin
-  if lpGuid <> nil then
-  begin
-    TStrings(lpContext).Add(lpcstrDescription);
-    SetLength(guidArr, Length(guidArr) + 1);
-    guidArr[Length(guidArr) - 1] := lpGuid^;
-  end;
-  Result := True;
-end;
 
 function InitiateDirectSound(hDlg: HWND): Boolean;
 var
@@ -179,19 +165,26 @@ begin
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
+var R: TRegistry;
 begin
-//  InitiateDirectSound(Handle);
-//  CreateStaticBuffer(Handle);
-//  FillBuffer(600);
+  R := TRegistry.Create;
+  try
+    if not R.OpenKey('Software\AlMaGriNa', True) then
+      RaiseLastOSError;
+    R.ReadBinaryData('SumVAC', TDSGUID, 16);
+    Caption:= GUIDToString(TDSGUID);
+  finally R.Free;
+  end;
+
+
+  InitiateDirectSound(Handle);
+  CreateStaticBuffer(Handle);
+  FillBuffer(600);
 
   PortListner:= TPortListner.Create(True);
   PortListner.FreeOnTerminate:=true;
   PortListner.Priority:=tpLower;
   PortListner.Resume;
-
-  DirectSoundEnumerate(EnumCallback, ComboBox1.Items);
-  ComboBox1.ItemIndex := 0;
-  ComboBox1.OnChange(nil);
 end;
 
 procedure TForm1.ComboBox1Change(Sender: TObject);
@@ -203,9 +196,9 @@ begin
 //  ZeroMemory(@capInfo, SizeOf(TDSCaps));
 //  capInfo.dwSize := SizeOf(TDSCaps);
 //  DirectSoundCreate(@guidArr[ComboBox1.ItemIndex], DS, nil);
-  TDSGUID:= guidArr[ComboBox1.ItemIndex];
+//  TDSGUID:= guidArr[ComboBox1.ItemIndex];
   DirectSoundCreate(@TDSGUID, DS, nil);
-  Caption := GUIDToString(guidArr[ComboBox1.ItemIndex]);
+//  Caption := GUIDToString(guidArr[ComboBox1.ItemIndex]);
 //  DS.GetCaps(capInfo);
 end;
 
@@ -238,13 +231,6 @@ end;
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
   FreeDirectSound;
-end;
-
-procedure TForm1.Button3Click(Sender: TObject);
-begin
-  InitiateDirectSound(Handle);
-  CreateStaticBuffer(Handle);
-  FillBuffer(600);
 end;
 
 end.
