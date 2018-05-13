@@ -17,6 +17,7 @@ type
     procedure Button2Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure ComboBox1Change(Sender: TObject);
 
   private
     { Private declarations }
@@ -76,19 +77,32 @@ const Pi = 3.14159265359;
       //MaxVol = 32767;
       MaxVol = 3276;
 var
-  DS: IDirectSound;
   DSBuffer: IDirectSoundBuffer;
   BufferSize: LongInt;
   wfx: tWAVEFORMATEX;
+  guidArr: array of TGUID;
+  DS: IDirectSound;
+  DSGUID: PGUID;
 
 {$R *.dfm}
+function EnumCallback(lpGuid: PGUID; lpcstrDescription, lpcstrModule: PChar;
+    lpContext: Pointer): BOOL; stdcall;
+begin
+  if lpGuid <> nil then
+  begin
+    TStrings(lpContext).Add(lpcstrDescription);
+    SetLength(guidArr, Length(guidArr) + 1);
+    guidArr[Length(guidArr) - 1] := lpGuid^;
+  end;
+  Result := True;
+end;
 
 function InitiateDirectSound(hDlg: HWND): Boolean;
 var
   DSBPrimary: IDirectSoundBuffer;
   DSBD: TDSBufferDesc;
 begin
-  DirectSoundCreate(nil, DS, nil);
+  DirectSoundCreate(DSGUID, DS, nil);
   DS.SetCooperativeLevel(hDlg, DSSCL_PRIORITY);
 
   FillChar(DSBD, sizeof(TDSBufferDesc), 0);
@@ -169,10 +183,30 @@ begin
 //  InitiateDirectSound(Handle);
 //  CreateStaticBuffer(Handle);
 //  FillBuffer(600);
+
   PortListner:= TPortListner.Create(True);
   PortListner.FreeOnTerminate:=true;
   PortListner.Priority:=tpLower;
   PortListner.Resume;
+
+  DirectSoundEnumerate(EnumCallback, ComboBox1.Items);
+  ComboBox1.ItemIndex := 0;
+  ComboBox1.OnChange(nil);
+end;
+
+procedure TForm1.ComboBox1Change(Sender: TObject);
+//var
+//  DS: IDirectSound;
+//  capInfo: TDSCaps;
+//  DSGUID: PGUID;
+begin
+//  ZeroMemory(@capInfo, SizeOf(TDSCaps));
+//  capInfo.dwSize := SizeOf(TDSCaps);
+//  DirectSoundCreate(@guidArr[ComboBox1.ItemIndex], DS, nil);
+  DSGUID:= @guidArr[ComboBox1.ItemIndex];
+  DirectSoundCreate(DSGUID, DS, nil);
+  Caption := GUIDToString(guidArr[ComboBox1.ItemIndex]);
+//  DS.GetCaps(capInfo);
 end;
 
 procedure TForm1.TonePlay;
